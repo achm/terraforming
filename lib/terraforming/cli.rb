@@ -3,6 +3,7 @@ module Terraforming
     class_option :merge, type: :string, desc: "tfstate file to merge"
     class_option :overwrite, type: :boolean, desc: "Overwrite existng tfstate"
     class_option :tfstate, type: :boolean, desc: "Generate tfstate"
+    class_option :profile, type: :string, desc: "aws config profile name"
 
     desc "dbpg", "Database Parameter Group"
     def dbpg
@@ -137,6 +138,8 @@ module Terraforming
     private
 
     def execute(klass, options)
+      set_profile(options[:profile])
+
       result = options[:tfstate] ? tfstate(klass, options[:merge]) : tf(klass)
 
       if options[:tfstate] && options[:merge] && options[:overwrite]
@@ -174,6 +177,11 @@ module Terraforming
           }
         ]
       }
+    end
+
+    def set_profile(profile_name = nil)
+      return if profile_name.nil?
+      Aws.config[:profile] = profile_name
     end
   end
 end
