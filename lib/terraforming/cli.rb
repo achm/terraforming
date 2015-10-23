@@ -182,6 +182,7 @@ module Terraforming
     def set_profile(profile_name = nil)
       return if profile_name.nil?
       Aws.config[:profile] = profile_name
+      Aws.config[:region] = AWSConfig[profile_name][:region] || AWSConfig[:default][:region]
     end
   end
 end
